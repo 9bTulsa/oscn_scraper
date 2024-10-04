@@ -17,6 +17,20 @@ RSpec.describe OscnScraper::Parsers::Issues do
       end
     end
 
+    context 'when case has a simplified issue format' do
+      it 'parses the data' do
+        fixture_path = 'spec/fixtures/parsers/issues/simplified-format.html'
+        html = File.read(fixture_path) # Custom parse to fix nokogiri parse error
+        html = html.gsub('<$', '< $')
+        parsed_html = Nokogiri::HTML.parse(html).css('body').children
+        data = described_class.parse(parsed_html)
+
+        expect(data[:issues].count).to eq 1
+        expect(data[:issues].first[:number]).to eq '1'
+        expect(data[:issues].first[:issue_name]).to eq 'FORCIBLE ENTRY AND DETAINER/SMALL CLAIMS UP TO $5,000.00'
+      end
+    end
+
     context 'when case has two parties' do
       it 'parses the data' do
         fixture_path = 'spec/fixtures/parsers/issues/two-party.html'

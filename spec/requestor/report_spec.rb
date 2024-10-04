@@ -10,6 +10,13 @@ RSpec.describe OscnScraper::Requestor::Report do
       expect { described_class.new(params).fetch_daily_filings }.to raise_error OscnScraper::Errors::InvalidParam
     end
 
+    it 'only allows valid counties' do
+      params = {
+        county: 'Wagoner'
+      }
+      expect { described_class.new(params).fetch_daily_filings }.to raise_error OscnScraper::Errors::InvalidParam
+    end
+
     it 'checks for required params' do
       params = {
         county: 'Oklahoma'

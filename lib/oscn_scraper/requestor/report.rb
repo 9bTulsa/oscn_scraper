@@ -1,5 +1,10 @@
 module OscnScraper
   module Requestor
+
+    DAILING_FILINGS_COUNTIES = [
+      'Adair', 'Canadian', 'Cleveland', 'Comanche',  'Ellis', 'Garfield', 'Logan', 'Oklahoma', 'Payne', 'Pushmataha',
+      'Roger Mills', 'Rogers', 'Tulsa'
+    ]
     # Searches reports on OSCN
     # @note OSCN Endpoint - https:://www.oscn.net/applications/oscn/report.asp?
     class Report < Base
@@ -22,6 +27,9 @@ module OscnScraper
       # @param param_name [data_type]
       # @return Request response
       def fetch_daily_filings
+        unless DAILING_FILINGS_COUNTIES.include? kwargs[:county]
+          raise ::OscnScraper::Errors::InvalidParam, 'County not available for DailyFilings report'
+        end
         valid_params?(kwargs.keys, valid_daily_filings_params)
         required_params?(kwargs.keys, required_daily_filing_params)
         params = {

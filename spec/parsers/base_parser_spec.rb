@@ -33,6 +33,23 @@ RSpec.describe OscnScraper::Parsers::BaseParser do
       end
     end
 
+    context 'when parsing a kp case for a smaller county (vs an ocis case) ' do
+      it 'parses the html' do
+        fixture_path = 'spec/fixtures/kp-example.html'
+        html = File.read(fixture_path) # Custom parse to fix nokogiri parse error
+        html = html.gsub('<$', '< $')
+        parsed_html = Nokogiri::HTML.parse(html)
+        data = described_class.new(parsed_html).build_object
+
+        expect(data[:events].count).to_not be nil
+        expect(data[:attorneys].count).to_not be nil
+        expect(data[:parties].count).to_not be nil
+        expect(data[:counts].count).to_not be nil
+        expect(data[:issues].count).to_not be nil
+        expect(data[:docket_events].count).to_not be nil
+      end
+    end
+
     context 'when the case is not found on OSCN' do
       it 'returns a helpful message' do
         fixture_path = 'spec/fixtures/case_not_found.html'
